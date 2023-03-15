@@ -46,6 +46,14 @@ public class WebCrawlController {
         return webCrawlService.crawlDomain(domain,driverPath,crawUrl,browserPath);
     }
 
+    /**
+     *
+     * @param domainName domain，例如yahoo.com.tw
+     * @param driverPath browser driver 例如 chromedriver
+     * @param crawUrl 要爬的網站
+     * @param browserPath 二進制瀏覽器位置，windows目前版本需要設定
+     * @return
+     */
     public String crawlDomain(String domainName,String driverPath,String crawUrl,String browserPath) {
         System.setProperty("webdriver.gecko.driver", driverPath);
         FirefoxOptions options = new FirefoxOptions();
@@ -55,14 +63,20 @@ public class WebCrawlController {
         options.addArguments("headless");
         options.addArguments("no-sandbox");
         options.addArguments("--display=:1");
-        options.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.69");
-
+        //新增假身分useragent
+        String userAgent="Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+//        options.addPreference("general.useragent.override", userAgent);
 
         WebDriver driver =new FirefoxDriver(options);
 
         driver.manage().window().maximize();
         crawUrl = crawUrl.replace("<domainName>", domainName);
-        driver.get(crawUrl);
+        try {
+            driver.get(crawUrl);
+        } catch (Exception e) {
+            logger.error("driver啟動失敗");
+            e.printStackTrace();
+        }
         //網站延遲5秒,程式60秒
         Duration timeout = Duration.ofSeconds(60);
         WebDriverWait wait = new WebDriverWait(driver, timeout);
