@@ -1,10 +1,7 @@
 package com.eland;
 
 import com.google.gson.Gson;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,7 +16,10 @@ import java.util.List;
 public class WebCraw {
     private static final Logger logger = Logger.getLogger(WebCraw.class.getName());
 
-
+    /**
+     * windows測試
+     * @param args
+     */
     public static void main(String[] args) {
 
 //        System.setProperty("webdriver.chrome.driver", "D:\\Tools\\\\chromedriver\\chromedriver.exe");
@@ -35,11 +35,17 @@ public class WebCraw {
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-gpu");
+        options.addArguments("--display=:1");
+        options.addPreference("general.useragent.override", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+        //設置代理
+        Proxy proxy = new Proxy();
+        proxy.setHttpProxy("103.145.113.78:8080");
+        options.setCapability("proxy", proxy);
         WebDriver driver =new FirefoxDriver(options);
 //        WebDriver driver = new EdgeDriver(options);
 
-        String domainName = "poya.com.tw";
-        String url = "https://www.similarweb.com/zh-tw/website/" + domainName;
+        String domainName = "yahoo.com.tw";
+        String url = "https://www.similarweb.com/website/" + domainName;
         driver.get(url);
         //網站延遲5秒，延遲300秒
         Duration timeout = Duration.ofSeconds(60);
@@ -92,7 +98,6 @@ public class WebCraw {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(domainName + "searcher is failed");
-            //將來可新增dao到某張上傳失敗表到資料庫， 可以做補爬蟲
         } finally {
             driver.quit();
         }
